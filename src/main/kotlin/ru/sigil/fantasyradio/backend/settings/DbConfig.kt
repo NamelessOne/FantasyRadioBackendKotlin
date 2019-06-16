@@ -2,7 +2,7 @@ package ru.sigil.fantasyradio.backend.settings
 
 import com.typesafe.config.ConfigFactory
 
-class DbSettings: IDbSettings {
+class DbConfig: IDbConfig {
     override val driver: String
         get() = ConfigFactory.load().getString("db.default.driver")
     override val url: String

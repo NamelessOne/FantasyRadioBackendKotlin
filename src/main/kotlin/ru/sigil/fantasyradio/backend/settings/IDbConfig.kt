@@ -1,6 +1,6 @@
 package ru.sigil.fantasyradio.backend.settings
 
-interface IDbSettings {
+interface IDbConfig {
     val driver: String
     val url: String
     val username: String

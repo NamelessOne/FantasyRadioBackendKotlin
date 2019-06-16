@@ -1,14 +1,11 @@
 package ru.sigil.fantasyradio.backend.controllers
 
-import com.fatboyindustrial.gsonjodatime.Converters
-import com.google.gson.GsonBuilder
+import com.google.gson.Gson
 import io.ktor.application.Application
 import io.ktor.application.call
 import io.ktor.application.install
 import io.ktor.features.CallLogging
-import io.ktor.features.ContentNegotiation
 import io.ktor.features.DefaultHeaders
-import io.ktor.gson.gson
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
 import io.ktor.response.respond
@@ -16,33 +13,39 @@ import io.ktor.routing.Routing
 import io.ktor.routing.get
 import io.ktor.routing.post
 import io.ktor.routing.route
-import ru.sigil.fantasyradio.backend.dal.DbManager
+import org.kodein.di.generic.instance
+import org.kodein.di.generic.on
+import ru.sigil.fantasyradio.backend.dal.IDbManager
+import ru.sigil.fantasyradio.backend.di.KodeinConfig
+import ru.sigil.fantasyradio.backend.di.RequestContext
 import ru.sigil.fantasyradio.backend.dto.CrashReportDTO
 import ru.sigil.fantasyradio.backend.dto.CurrentStreamInformationDTO
-import ru.sigil.fantasyradio.backend.settings.DbSettings
 
 fun Application.main() {
+    val kodein = KodeinConfig().configure()
     install(DefaultHeaders)
     install(CallLogging)
-    install(ContentNegotiation) {
-        gson {
-
-        }
-    }
     install(Routing) {
         route("/CurrentStreamInformation") {
             post("/") {
+                val contextedDi = kodein.on(RequestContext())
+                val repo by contextedDi.instance<IDbManager>()
                 val entity = call.receive<CurrentStreamInformationDTO>()
-                DbManager(DbSettings()).saveCurrentStreamInformation(entity)
+                repo.saveCurrentStreamInformation(entity)
             }
             get("/Last") {
-                val last = DbManager(DbSettings()).getLastCurrentStreamInformation() ?: call.respond(HttpStatusCode.NotFound)
-                call.respond(Converters.registerDateTime(GsonBuilder()).create().toJson(last))
+                val contextedDi = kodein.on(RequestContext())
+                val repo by contextedDi.instance<IDbManager>()
+                val gson by contextedDi.instance<Gson>()
+                val last = repo.getLastCurrentStreamInformation() ?: call.respond(HttpStatusCode.NotFound)
+                call.respond(gson.toJson(last))
             }
         }
         post("/Crash") {
+            val contextedDi = kodein.on(RequestContext())
+            val repo by contextedDi.instance<IDbManager>()
             val entity = call.receive<CrashReportDTO>()
-            DbManager(DbSettings()).saveCrashReport(entity)
+            repo.saveCrashReport(entity)
         }
     }
 }

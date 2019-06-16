@@ -11,9 +11,9 @@ import org.postgresql.ds.PGSimpleDataSource
 import ru.sigil.fantasyradio.backend.dal.util.jsonb
 import ru.sigil.fantasyradio.backend.dto.CrashReportDTO
 import ru.sigil.fantasyradio.backend.dto.CurrentStreamInformationDTO
-import ru.sigil.fantasyradio.backend.settings.IDbSettings
+import ru.sigil.fantasyradio.backend.settings.IDbConfig
 
-class DbManager(settings: IDbSettings) : IDbManager {
+class DbManager(settings: IDbConfig) : IDbManager {
     init {
         val source = PGSimpleDataSource()
         source.serverName = settings.url.replaceFirst("//", "")
