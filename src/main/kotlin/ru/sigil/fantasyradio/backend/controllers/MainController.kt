@@ -48,7 +48,8 @@ fun Application.main() {
         post("/Crash") {
             val contextedDi = kodein.on(RequestContext())
             val repo by contextedDi.instance<IDbManager>()
-            val entity = call.receive<CrashReportDTO>()
+            val gson by contextedDi.instance<Gson>()
+            val entity = gson.fromJson(call.receiveText(), CrashReportDTO::class.java)
             repo.saveCrashReport(entity)
         }
     }
