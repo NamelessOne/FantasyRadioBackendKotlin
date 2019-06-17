@@ -9,6 +9,7 @@ import io.ktor.features.DefaultHeaders
 import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
 import io.ktor.request.receive
+import io.ktor.request.receiveText
 import io.ktor.response.respond
 import io.ktor.response.respondText
 import io.ktor.routing.Routing
@@ -32,7 +33,8 @@ fun Application.main() {
             post("/") {
                 val contextedDi = kodein.on(RequestContext())
                 val repo by contextedDi.instance<IDbManager>()
-                val entity = call.receive<CurrentStreamInformationDTO>()
+                val gson by contextedDi.instance<Gson>()
+                val entity = gson.fromJson(call.receiveText(), CurrentStreamInformationDTO::class.java)
                 repo.saveCurrentStreamInformation(entity)
             }
             get("/Last") {
