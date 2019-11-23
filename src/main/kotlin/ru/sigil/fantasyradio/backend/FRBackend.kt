@@ -11,7 +11,7 @@ import ru.sigil.fantasyradio.backend.routes.crash
 import ru.sigil.fantasyradio.backend.routes.currentStreamInformation
 
 fun Application.main() {
-    val kodein = KodeinConfig().configure()
+    val kodein = KodeinConfig.configure()
     install(DefaultHeaders)
     install(CallLogging)
     install(Routing) {

@@ -53,6 +53,7 @@ dependencies {
     implementation "ch.qos.logback:logback-classic:1.2.3"
     implementation "org.kodein.di:kodein-di-generic-jvm:$kodein_version"
     implementation "org.kodein.di:kodein-di-framework-ktor-server-jvm:$kodein_version"
+    implementation "com.zaxxer:HikariCP:3.4.1"
     implementation project(":shared")
     implementation project(":dal")
     testImplementation "org.junit.jupiter:junit-jupiter:$jupiter_version"

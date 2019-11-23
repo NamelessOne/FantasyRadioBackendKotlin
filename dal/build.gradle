@@ -17,9 +17,9 @@ repositories {
 }
 
 dependencies {
-    implementation "org.jetbrains.exposed:exposed:0.14.4"
-    implementation "postgresql:postgresql:9.1-901.jdbc4"
+    implementation "org.jetbrains.exposed:exposed:0.17.7"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    api "org.postgresql:postgresql:42.2.8"
     implementation project(":shared")
     testImplementation "org.junit.jupiter:junit-jupiter:$jupiter_version"
 }

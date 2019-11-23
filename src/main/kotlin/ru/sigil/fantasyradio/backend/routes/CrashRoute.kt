@@ -7,14 +7,18 @@ import io.ktor.routing.Route
 import io.ktor.routing.post
 import org.kodein.di.Kodein
 import org.kodein.di.generic.instance
-import ru.sigil.fantasyradio.backend.dal.IDataSorce
+import ru.sigil.fantasyradio.backend.shared.model.IDbProvider
 import ru.sigil.fantasyradio.backend.shared.data.CrashReport
+import ru.sigil.fantasyradio.backend.shared.model.ICrashReportsRepository
 
 fun Route.crash(kodeinFactory: (ApplicationCall) -> Kodein) {
     post("/Crash") {
         val contextedDi = kodeinFactory(call)
-        val repo by contextedDi.instance<IDataSorce>()
+        val dbProvider by contextedDi.instance<IDbProvider>()
+        val repo by contextedDi.instance<ICrashReportsRepository>()
         val entity = CrashReport(0, call.receiveText())
-        repo.saveCrashReport(entity)
+        dbProvider.suspendedTransaction {
+            repo.saveCrashReport(entity)
+        }
     }
 }
