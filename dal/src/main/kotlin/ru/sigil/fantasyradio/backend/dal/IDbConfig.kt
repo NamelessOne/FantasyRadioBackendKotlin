@@ -1,4 +1,4 @@
-package ru.sigil.fantasyradio.backend.settings
+package ru.sigil.fantasyradio.backend.dal
 
 interface IDbConfig {
     val driver: String

@@ -1,1 +1,3 @@
 rootProject.name = 'ru.sigil.fantasyradio.backend'
+include 'dal', 'shared'
+

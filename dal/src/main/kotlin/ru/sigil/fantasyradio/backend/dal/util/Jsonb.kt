@@ -12,7 +12,7 @@ import java.sql.PreparedStatement
  */
 
 fun <T : Any> Table.jsonb(name: String, jsonMapper: Gson): Column<T>
-        = registerColumn(name, Json(jsonMapper))
+        = registerColumn(name, ru.sigil.fantasyradio.backend.dal.util.Json(jsonMapper))
 
 
 private class Json(private val jsonMapper: Gson) : ColumnType() {

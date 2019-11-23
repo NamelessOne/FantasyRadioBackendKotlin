@@ -9,11 +9,11 @@ import org.jetbrains.exposed.sql.selectAll
 import org.jetbrains.exposed.sql.transactions.transaction
 import org.postgresql.ds.PGSimpleDataSource
 import ru.sigil.fantasyradio.backend.dal.util.jsonb
-import ru.sigil.fantasyradio.backend.dto.CrashReportDTO
-import ru.sigil.fantasyradio.backend.dto.CurrentStreamInformationDTO
-import ru.sigil.fantasyradio.backend.settings.IDbConfig
+import ru.sigil.fantasyradio.backend.dal.IDbConfig
+import ru.sigil.fantasyradio.backend.shared.data.CrashReport
+import ru.sigil.fantasyradio.backend.shared.data.CurrentStreamInformation
 
-class DbManager(settings: IDbConfig) : IDbManager {
+class PGDataSorce(settings: IDbConfig) : IDataSorce {
     init {
         val source = PGSimpleDataSource()
         source.serverName = settings.url.replaceFirst("//", "")
@@ -22,32 +22,32 @@ class DbManager(settings: IDbConfig) : IDbManager {
         Database.connect(source)
     }
 
-    override fun getLastCurrentStreamInformation() : CurrentStreamInformationDTO? {
-        var res: CurrentStreamInformationDTO? = null
+    override fun getLastCurrentStreamInformation() : CurrentStreamInformation? {
+        var res: CurrentStreamInformation? = null
         transaction {
             val info = CurrentStreamInformations.selectAll()
                 .orderBy(CurrentStreamInformations.created to SortOrder.DESC).first()
 
             //res = CurrentStreamInformationDTO(info.id.value, info.imageURL, info.about, info.created)
-            res = CurrentStreamInformationDTO(info[CurrentStreamInformations.id].value, info[CurrentStreamInformations.imageURL],
+            res = CurrentStreamInformation(info[CurrentStreamInformations.id].value, info[CurrentStreamInformations.imageURL],
                 info[CurrentStreamInformations.about], info[CurrentStreamInformations.created])
         }
         return res
     }
 
-    override fun saveCurrentStreamInformation(entity: CurrentStreamInformationDTO) {
+    override fun saveCurrentStreamInformation(entity: CurrentStreamInformation) {
         transaction {
             CurrentStreamInformations.insert {
-                it[imageURL] = entity.imageURL
-                it[about] = entity.about
+                it[CurrentStreamInformations.imageURL] = entity.imageURL
+                it[CurrentStreamInformations.about] = entity.about
             }
         }
     }
 
-    override fun saveCrashReport(entity: CrashReportDTO) {
+    override fun saveCrashReport(entity: CrashReport) {
             transaction {
                 CrashReports.insert {
-                    it[detail] = entity.detail
+                    it[CrashReports.detail] = entity.detail
                 }
             }
     }
