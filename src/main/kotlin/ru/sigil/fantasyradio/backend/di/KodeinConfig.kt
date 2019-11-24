@@ -7,6 +7,7 @@ import com.zaxxer.hikari.HikariDataSource
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
 import org.kodein.di.generic.instance
+import org.kodein.di.generic.multiton
 import org.kodein.di.generic.provider
 import org.kodein.di.generic.scoped
 import org.kodein.di.generic.singleton
@@ -17,8 +18,10 @@ import ru.sigil.fantasyradio.backend.dal.IDbConfig
 import ru.sigil.fantasyradio.backend.dal.impl.DbProvider
 import ru.sigil.fantasyradio.backend.dal.impl.repo.CrashReportRepository
 import ru.sigil.fantasyradio.backend.dal.impl.repo.CurrentStreamInformationRepository
+import ru.sigil.fantasyradio.backend.log.FRBackendLogger
 import ru.sigil.fantasyradio.backend.shared.model.ICrashReportsRepository
 import ru.sigil.fantasyradio.backend.shared.model.ICurrentStreamInformationRepository
+import ru.sigil.fantasyradio.backend.shared.model.IFRBackendLogger
 import javax.sql.DataSource
 
 object KodeinConfig {
@@ -35,6 +38,7 @@ object KodeinConfig {
                 settings.minIdle?.let { minimumIdle = it }
             }
         }
+        bind<IFRBackendLogger>() with multiton { name: String -> FRBackendLogger(name) }
 
         //Scoped
         bind<IDbProvider>() with scoped(CallScope).singleton { DbProvider(instance()) }
