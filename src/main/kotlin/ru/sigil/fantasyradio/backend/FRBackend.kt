@@ -22,7 +22,7 @@ fun Application.main() {
     install(CallLogging)
     install(StatusPages) {
         exception<Throwable> {
-            val logger by kodein.instance<IFRBackendLogger>()
+            val logger: IFRBackendLogger by kodein.instance(arg = "Unhandled exception logger")
             logger.error("Unhandled exception", it)
             call.respond(HttpStatusCode.InternalServerError)
         }
