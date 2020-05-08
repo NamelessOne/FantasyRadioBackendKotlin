@@ -2,7 +2,9 @@ package ru.sigil.fantasyradio.backend.routes
 
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
+import io.ktor.http.HttpStatusCode
 import io.ktor.request.receiveText
+import io.ktor.response.respond
 import io.ktor.routing.Route
 import io.ktor.routing.post
 import org.kodein.di.Kodein
@@ -20,5 +22,6 @@ fun Route.crash(kodeinFactory: (ApplicationCall) -> Kodein) {
         dbProvider.suspendedTransaction {
             repo.saveCrashReport(entity)
         }
+        call.respond(HttpStatusCode.OK)
     }
 }

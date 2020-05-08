@@ -1,13 +1,10 @@
 package ru.sigil.fantasyradio.backend.routes
 
-import com.google.gson.Gson
 import io.ktor.application.ApplicationCall
 import io.ktor.application.call
-import io.ktor.http.ContentType
 import io.ktor.http.HttpStatusCode
-import io.ktor.request.receiveText
+import io.ktor.request.receive
 import io.ktor.response.respond
-import io.ktor.response.respondText
 import io.ktor.routing.Route
 import io.ktor.routing.get
 import io.ktor.routing.post
@@ -24,20 +21,19 @@ fun Route.currentStreamInformation(kodeinFactory: (ApplicationCall) -> Kodein) {
             val contextedDi = kodeinFactory(call)
             val dbProvider by contextedDi.instance<IDbProvider>()
             val repo by contextedDi.instance<ICurrentStreamInformationRepository>()
-            val gson by contextedDi.instance<Gson>()
-            val entity = gson.fromJson(call.receiveText(), CurrentStreamInformation::class.java)
+            val entity = call.receive<CurrentStreamInformation>()
             dbProvider.suspendedTransaction {
                 repo.saveCurrentStreamInformation(entity)
             }
+            call.respond(HttpStatusCode.OK)
         }
         get("/Last") {
             val contextedDi = kodeinFactory(call)
             val dbProvider by contextedDi.instance<IDbProvider>()
             val repo by contextedDi.instance<ICurrentStreamInformationRepository>()
-            val gson by contextedDi.instance<Gson>()
             dbProvider.suspendedTransaction {
                 val last = repo.getLastCurrentStreamInformation() ?: call.respond(HttpStatusCode.NotFound)
-                call.respondText(gson.toJson(last), contentType = ContentType.parse("application/json"))
+                call.respond(last)
             }
         }
     }

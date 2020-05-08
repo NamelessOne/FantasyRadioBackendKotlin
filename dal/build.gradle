@@ -5,10 +5,10 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 repositories {
@@ -19,6 +19,7 @@ repositories {
 dependencies {
     implementation "org.jetbrains.exposed:exposed:0.17.7"
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    api "com.fasterxml.jackson.module:jackson-module-kotlin:2.10.1"
     api "org.postgresql:postgresql:42.2.8"
     implementation project(":shared")
     testImplementation "org.junit.jupiter:junit-jupiter:$jupiter_version"

@@ -1,8 +1,12 @@
 package ru.sigil.fantasyradio.backend.di
 
-import com.fatboyindustrial.gsonjodatime.Converters
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.databind.ObjectReader
+import com.fasterxml.jackson.databind.ObjectWriter
+import com.fasterxml.jackson.databind.SerializationFeature
+import com.fasterxml.jackson.datatype.joda.JodaModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.fasterxml.jackson.module.kotlin.registerKotlinModule
 import com.zaxxer.hikari.HikariDataSource
 import org.kodein.di.Kodein
 import org.kodein.di.generic.bind
@@ -25,6 +29,9 @@ import ru.sigil.fantasyradio.backend.shared.model.IFRBackendLogger
 import javax.sql.DataSource
 
 object KodeinConfig {
+    private val mapper = ObjectMapper().registerKotlinModule().disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS)
+        .registerModule(JodaModule())
+
     fun configure() = Kodein {
         //Singletons
         bind<IDbConfig>() with singleton { DbConfig() }
@@ -38,14 +45,15 @@ object KodeinConfig {
                 settings.minIdle?.let { minimumIdle = it }
             }
         }
+        bind<IDbProvider>() with singleton { DbProvider(instance()) }
         bind<IFRBackendLogger>() with multiton { name: String -> FRBackendLogger(name) }
 
         //Scoped
-        bind<IDbProvider>() with scoped(CallScope).singleton { DbProvider(instance()) }
         bind<ICrashReportsRepository>() with scoped(CallScope).singleton { CrashReportRepository() }
         bind<ICurrentStreamInformationRepository>() with scoped(CallScope).singleton { CurrentStreamInformationRepository() }
 
         //Providers
-        bind<Gson>() with provider { Converters.registerDateTime(GsonBuilder()).create() }
+        bind<ObjectReader>() with provider { mapper.reader() }
+        bind<ObjectWriter>() with provider { mapper.writer() }
     }
 }

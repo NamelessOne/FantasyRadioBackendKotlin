@@ -5,10 +5,10 @@ apply plugin: 'java'
 apply plugin: 'kotlin'
 
 compileKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 compileTestKotlin {
-    kotlinOptions.jvmTarget = "1.8"
+    kotlinOptions.jvmTarget = "11"
 }
 
 repositories {
@@ -18,6 +18,6 @@ repositories {
 
 dependencies {
     implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
-    api "com.fatboyindustrial.gson-jodatime-serialisers:gson-jodatime-serialisers:1.0.0"
+    api "joda-time:joda-time:2.10.5"
     testImplementation "org.junit.jupiter:junit-jupiter:$jupiter_version"
 }
